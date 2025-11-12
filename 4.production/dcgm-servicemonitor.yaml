@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nvidia-dcgm-exporter
+  namespace: monitoring
+  labels:
+    app: nvidia-dcgm-exporter
+    release: prometheus-cluster
+spec:
+  namespaceSelector:
+    matchNames:
+      - gpu-operator
+  selector:
+    matchLabels:
+      app: nvidia-dcgm-exporter
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

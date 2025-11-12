@@ -1,0 +1,60 @@
+fullnameOverride: prometheus
+
+prometheus:
+  prometheusSpec:
+    externalLabels:
+      cluster: sandbox
+      environment: sandbox
+    
+    retention: 7d
+    retentionSize: "50GB"
+    
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 8Gi
+    
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 100Gi
+          storageClassName: ceph-rbd
+    
+    remoteWrite:
+      - url: http://172.16.200.200:9090/api/v1/write
+        writeRelabelConfigs:
+          - sourceLabels: [__name__]
+            regex: 'up|node_.*|container_.*|kube_.*|DCGM_.*|prometheus_.*'
+            action: keep
+        queueConfig:
+          capacity: 10000
+          maxShards: 50
+    
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+  service:
+    type: NodePort
+    nodePort: 32090
+
+grafana:
+  enabled: true
+  adminPassword: "jaist-sandbox-monitoring"
+  service:
+    type: NodePort
+    nodePort: 32000
+
+alertmanager:
+  enabled: true
+
+prometheus-node-exporter:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
