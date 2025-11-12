@@ -1,0 +1,29 @@
+csiConfig:
+  - clusterID: "ba734e21-9a34-4945-8442-e6463bfe3d1f"
+    monitors:
+      - "172.16.200.11:6789"
+      - "172.16.200.12:6789"
+      - "172.16.200.13:6789"
+      - "172.16.200.14:6789"
+      - "172.16.200.15:6789"
+
+storageClass:
+  create: true
+  name: ceph-rbd
+  clusterID: "ba734e21-9a34-4945-8442-e6463bfe3d1f"
+  pool: kubernetes
+  reclaimPolicy: Retain
+  allowVolumeExpansion: true
+  mountOptions:
+    - discard
+
+secret:
+  create: false
+  name: csi-rbd-secret
+
+provisioner:
+  name: provisioner
+  replicaCount: 2
+
+nodeplugin:
+  name: nodeplugin
